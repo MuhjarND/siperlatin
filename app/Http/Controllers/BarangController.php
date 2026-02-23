@@ -133,14 +133,18 @@ class BarangController extends Controller
         ->where("id",$id_barang)
         ->first();
 
+<<<<<<< HEAD
         if (is_null($table)) {
             return redirect()->route("barang.index")->with('error', 'Data barang tidak ditemukan.');
         }
 
+=======
+>>>>>>> b3f8b37fe5a718428c956e0384b0e98b0c345c26
         $last_id=DB::table("tb_detail_barang")
         ->where('id_barang', $id_barang)
         ->orderBy('id','DESC')
         ->first();
+<<<<<<< HEAD
 
         $lastNumber = 0;
         if (!is_null($last_id) && !empty($last_id->kode)) {
@@ -153,6 +157,12 @@ class BarangController extends Controller
         }
 
         $kode = $table->kode.".".($lastNumber + 1);
+=======
+        //get 
+        $a = (int)substr($last_id->kode, -2);
+
+        $kode = $table->kode.".".($a+1);
+>>>>>>> b3f8b37fe5a718428c956e0384b0e98b0c345c26
 
         if($request->hasFile("foto")){
             $fileName = time().'.'.$request->foto->extension();
