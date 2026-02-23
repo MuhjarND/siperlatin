@@ -133,14 +133,26 @@ class BarangController extends Controller
         ->where("id",$id_barang)
         ->first();
 
+        if (is_null($table)) {
+            return redirect()->route("barang.index")->with('error', 'Data barang tidak ditemukan.');
+        }
+
         $last_id=DB::table("tb_detail_barang")
         ->where('id_barang', $id_barang)
         ->orderBy('id','DESC')
         ->first();
-        //get 
-        $a = (int)substr($last_id->kode, -2);
 
-        $kode = $table->kode.".".($a+1);
+        $lastNumber = 0;
+        if (!is_null($last_id) && !empty($last_id->kode)) {
+            $parts = explode('.', $last_id->kode);
+            $suffix = end($parts);
+
+            if (is_numeric($suffix)) {
+                $lastNumber = (int)$suffix;
+            }
+        }
+
+        $kode = $table->kode.".".($lastNumber + 1);
 
         if($request->hasFile("foto")){
             $fileName = time().'.'.$request->foto->extension();
