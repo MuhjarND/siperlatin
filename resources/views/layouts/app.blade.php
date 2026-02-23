@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Siperlatin</title>
-    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/new logo.png') }}" type="image/png">
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -341,7 +341,7 @@
             <div class="sidebar-overlay js-sidebar-overlay"></div>
             <aside class="sidebar">
                 <a class="sidebar-brand text-decoration-none" href="{{ url('/home') }}">
-                    <img src="{{ asset('images/logo.png') }}" alt="Siperlatin">
+                    <img src="{{ asset('images/new logo.png') }}" alt="Siperlatin">
                     <strong>Siperlatin</strong>
                 </a>
 

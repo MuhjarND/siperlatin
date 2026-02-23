@@ -19,7 +19,7 @@
     <div class="row justify-content-center" >
       <table style=" margin-left: auto; margin-right: auto;">
         <tr>
-            <td width="25%" align="left"><img id="logo" src="{{public_path('images/logo.png')}}" width="80px"></td>
+            <td width="25%" align="left"><img id="logo" src="{{public_path('images/new logo.png')}}" width="80px"></td>
             <td width="75%"> <h5 style="text-align:center;">PENGADILAN TINGGI AGAMA PAPUA BARAT</h5>
                 <h6 style="text-align:center;">LAPORAN TRANSAKSI PERAWATAN BARANG</h6>
                 <p style="text-align:center; font-size:13px;">Dari tanggal: {{$dari_tgl}} - Sampai tanggal: {{$sampai_tgl}}</p>
@@ -69,4 +69,3 @@
     </article>
 
     </div>
-

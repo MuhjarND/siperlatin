@@ -4,7 +4,7 @@
 <div class="login-shell">
     <div class="login-panel">
         <section class="login-hero">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo Siperlatin">
+            <img src="{{ asset('images/new logo.png') }}" alt="Logo Siperlatin">
             <h1>Siperlatin</h1>
             <p>Sistem Perawatan Inventaris untuk monitoring kondisi, transaksi perawatan, dan laporan berbasis data.</p>
             <ul>

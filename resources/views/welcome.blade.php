@@ -226,7 +226,7 @@
                 <img
                     class="office-logo"
                     src="{{ asset('images/new logo.png') }}"
-                    onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';"
+                    onerror="this.onerror=null;this.src='{{ asset('images/new logo.png') }}';"
                     alt="Logo Pengadilan Tinggi Agama Papua Barat">
                 <div class="office-subtitle">Masuk ke sistem untuk mengelola data perawatan inventaris.</div>
 
