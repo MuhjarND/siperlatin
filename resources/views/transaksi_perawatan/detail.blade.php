@@ -10,15 +10,11 @@
                     <p>Detail barang</p>
                 
                     <div style="margin-bottom:10px">
-                            <?php
-                            if(storage_path('foto/{{$table->foto}}')){?>
-                                <img src="../storage/foto/{{$table->foto}}" style="width:300px" />
-                            <?php 
-                            
-                            } else { ?>
-                                <img src="{{public_path('images/empty.png')}}" style="width:300px" />
-
-                            <?php } ?>
+                        @if(!empty($table->foto))
+                            <img src="{{ route('storage.foto', ['filename' => $table->foto]) }}" style="width:300px" />
+                        @else
+                            <img src="{{ asset('public/images/empty.png') }}" style="width:300px" />
+                        @endif
                     </div>
                 
                         <div style="margin-bottom:15px;">
@@ -76,7 +72,7 @@
                                 <td>{{$row->tanggal}}</td>
                                 <td>{{$row->keterangan}}</td>
                                 <td><?php echo number_format((float)$row->nominal, 2, ',', '.'); ?></td>
-                                <td><a href="../storage/files/{{$row->file_name}}" target="_blank">{{$row->file_name}}</a></td>
+                                <td><a href="{{ route('storage.file', ['filename' => $row->file_name]) }}" target="_blank">{{$row->file_name}}</a></td>
                                 @if(Auth::check())
                                 <td>
                                     <button class="btn btn-primary btn-sm edit" data-id_transaksi="{{$row->kode_transaksi}}" data-id_detail_barang="{{$id_detail_barang}}">Edit</button> <button class="btn btn-danger btn-sm delete" data-id_transaksi="{{$row->kode_transaksi}}" data-id_detail_barang="{{$id_detail_barang}}">Hapus</button>

@@ -39,11 +39,11 @@
                                     <td>
                                         <?php
                                             if(!empty($row->foto)){?>
-                                                <img src="../../storage/foto/{{$row->foto}}" style="width:90px" />
+                                                <img src="{{ route('storage.foto', ['filename' => $row->foto]) }}" style="width:90px" />
                                             <?php 
                                             
                                             } else { ?>
-                                                <img src="../../public/images/empty.png" style="width:90px" />
+                                                <img src="{{ asset('public/images/empty.png') }}" style="width:90px" />
 
                                             <?php } ?>
                                         </td>

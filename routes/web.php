@@ -20,6 +20,14 @@ Route::get('/', function () {
 Route::get('login', 'AuthController@showFormLogin')->name('login');
 Route::post('login', 'AuthController@login');
 
+Route::get('storage/foto/{filename}', 'StorageController@foto')
+    ->where('filename', '.*')
+    ->name('storage.foto');
+
+Route::get('storage/files/{filename}', 'StorageController@file')
+    ->where('filename', '.*')
+    ->name('storage.file');
+
 Route::get("transaksi_perawatan/{id_detail_barang}", "TransaksiPerawatanController@detail")->name("transaksi_perawatan.detail");
 
 Route::group(['middleware' => 'auth'], function () {
