@@ -6,6 +6,8 @@
 !/storage/files/.gitkeep
 /storage/foto/*
 !/storage/foto/.gitkeep
+/storage/_inspect_files/
+/storage/_inspect_foto/
 /vendor
 .env
 .env.backup

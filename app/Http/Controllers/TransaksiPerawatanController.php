@@ -9,22 +9,108 @@ class TransaksiPerawatanController extends Controller
 {
     public function index()
     {
-        $tb_barang = DB::table("tb_barang")
-        ->select("tb_barang.kode","tb_barang.nama","tb_barang.id AS id_barang")
-        ->join("tb_detail_barang", "tb_barang.id","=","tb_detail_barang.id_barang")
-        ->distinct()
-        ->get(["tb_barang.nama","tb_barang.id","tb_barang.kode"]);
-
-        $table=DB::table("tb_detail_barang")
-        ->select("tb_detail_barang.id AS id_detail_barang","tb_detail_barang.tgl_perolehan","tb_detail_barang.harga_perolehan","tb_detail_barang.id_barang","tb_detail_barang.foto", "tb_detail_barang.kode AS kode_detail_barang", "tb_detail_barang.nama AS nama_detail_barang","tb_barang.nama AS nama_barang")
-        ->join("tb_barang","tb_detail_barang.id_barang","=","tb_barang.id")
+        $detailBarang = DB::table("tb_detail_barang")
+        ->select(
+            "tb_detail_barang.id AS id_detail_barang",
+            "tb_detail_barang.tgl_perolehan",
+            "tb_detail_barang.harga_perolehan",
+            "tb_detail_barang.id_barang",
+            "tb_detail_barang.foto",
+            "tb_detail_barang.kode AS kode_detail_barang",
+            "tb_detail_barang.nama AS nama_detail_barang",
+            "tb_barang.kode AS kode_barang",
+            "tb_barang.nama AS nama_barang"
+        )
+        ->join("tb_barang", "tb_detail_barang.id_barang", "=", "tb_barang.id")
+        ->orderBy("tb_barang.nama")
+        ->orderBy("tb_detail_barang.kode")
         ->get();
 
-        $tb_transaksi=DB::table("tb_transaksi")->get();
+        $totalPerBarang = DB::table("tb_transaksi")
+        ->select("id_barang", DB::raw("SUM(nominal) AS total"))
+        ->groupBy("id_barang")
+        ->pluck("total", "id_barang");
 
-        $baris=$table->count();
+        $totalPerSubBarang = DB::table("tb_transaksi")
+        ->select("id_sub_barang", DB::raw("SUM(nominal) AS total"))
+        ->groupBy("id_sub_barang")
+        ->pluck("total", "id_sub_barang");
 
-        return view('transaksi_perawatan/index', compact("table","baris","tb_barang","tb_transaksi"));
+        $barangGroups = $detailBarang
+        ->groupBy("id_barang")
+        ->map(function ($items, $idBarang) use ($totalPerBarang, $totalPerSubBarang) {
+            $first = $items->first();
+
+            return (object) [
+                "id_barang" => $idBarang,
+                "kode" => $first->kode_barang,
+                "nama" => $first->nama_barang,
+                "grand_total" => (float) ($totalPerBarang[$idBarang] ?? 0),
+                "detail_count" => $items->count(),
+                "details" => $items->map(function ($item) use ($totalPerSubBarang) {
+                    return (object) [
+                        "id_detail_barang" => $item->id_detail_barang,
+                        "kode_detail_barang" => $item->kode_detail_barang,
+                        "nama_detail_barang" => $item->nama_detail_barang,
+                        "subtotal" => (float) ($totalPerSubBarang[$item->id_detail_barang] ?? 0),
+                        "is_orphan" => false,
+                    ];
+                })->values(),
+            ];
+        });
+
+        $orphanTransactions = DB::table("tb_transaksi")
+        ->leftJoin("tb_detail_barang", "tb_detail_barang.id", "=", "tb_transaksi.id_sub_barang")
+        ->join("tb_barang", "tb_barang.id", "=", "tb_transaksi.id_barang")
+        ->whereNull("tb_detail_barang.id")
+        ->select(
+            "tb_transaksi.id_barang",
+            "tb_barang.kode AS kode_barang",
+            "tb_barang.nama AS nama_barang",
+            "tb_transaksi.id_sub_barang",
+            DB::raw("SUM(tb_transaksi.nominal) AS subtotal"),
+            DB::raw("COUNT(tb_transaksi.id) AS transaksi_count")
+        )
+        ->groupBy(
+            "tb_transaksi.id_barang",
+            "tb_barang.kode",
+            "tb_barang.nama",
+            "tb_transaksi.id_sub_barang"
+        )
+        ->orderBy("tb_barang.nama")
+        ->get();
+
+        foreach ($orphanTransactions as $orphan) {
+            if (!$barangGroups->has($orphan->id_barang)) {
+                $barangGroups->put($orphan->id_barang, (object) [
+                    "id_barang" => $orphan->id_barang,
+                    "kode" => $orphan->kode_barang,
+                    "nama" => $orphan->nama_barang,
+                    "grand_total" => (float) ($totalPerBarang[$orphan->id_barang] ?? 0),
+                    "detail_count" => 0,
+                    "details" => collect(),
+                ]);
+            }
+
+            $group = $barangGroups->get($orphan->id_barang);
+            $group->details = $group->details->push((object) [
+                "id_detail_barang" => null,
+                "kode_detail_barang" => "ID hilang #" . $orphan->id_sub_barang,
+                "nama_detail_barang" => "Sub barang tidak ditemukan",
+                "subtotal" => (float) $orphan->subtotal,
+                "is_orphan" => true,
+            ])->values();
+            $group->detail_count = $group->details->count();
+            $barangGroups->put($orphan->id_barang, $group);
+        }
+
+        $barangGroups = $barangGroups
+        ->sortBy("nama", SORT_NATURAL | SORT_FLAG_CASE)
+        ->values();
+
+        $baris = $barangGroups->count();
+
+        return view("transaksi_perawatan/index", compact("barangGroups", "baris"));
     }
 
     public function detail($id_detail_barang){

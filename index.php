@@ -11,10 +11,19 @@ $uri = urldecode(
     parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
 );
 
+$rewrittenAssetPath = __DIR__.'/public'.$uri;
+$mirroredPublicAssetPath = strpos($uri, '/public/') === 0 ? __DIR__.$uri : null;
+
 // This file allows us to emulate Apache's "mod_rewrite" functionality from the
 // built-in PHP web server. This provides a convenient way to test a Laravel
 // application without having installed a "real" web server software here.
-if ($uri !== '/' && file_exists(__DIR__.'/public'.$uri)) {
+if (
+    $uri !== '/' &&
+    (
+        ($mirroredPublicAssetPath && file_exists($mirroredPublicAssetPath)) ||
+        file_exists($rewrittenAssetPath)
+    )
+) {
     return false;
 }
 

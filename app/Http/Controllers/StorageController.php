@@ -4,24 +4,62 @@ namespace App\Http\Controllers;
 
 class StorageController extends Controller
 {
-    public function foto($filename)
+    private function resolvePath($directory, $filename)
     {
         $safeName = basename($filename);
-        $path = storage_path('foto/'.$safeName);
+        $candidates = [
+            storage_path($directory.'/'.$safeName),
+            storage_path('app/public/'.$directory.'/'.$safeName),
+            public_path('storage/'.$directory.'/'.$safeName),
+        ];
 
-        if (!is_file($path)) {
-            abort(404);
+        foreach ($candidates as $path) {
+            if (is_file($path)) {
+                return $path;
+            }
         }
 
-        return response()->file($path);
+        return null;
+    }
+
+    private function emptyImagePath()
+    {
+        $candidates = [
+            public_path('images/empty.png'),
+            public_path('public/images/empty.png'),
+        ];
+
+        foreach ($candidates as $path) {
+            if (is_file($path)) {
+                return $path;
+            }
+        }
+
+        return null;
+    }
+
+    public function foto($filename)
+    {
+        $path = $this->resolvePath('foto', $filename);
+
+        if ($path) {
+            return response()->file($path);
+        }
+
+        $fallback = $this->emptyImagePath();
+
+        if ($fallback) {
+            return response()->file($fallback);
+        }
+
+        abort(404);
     }
 
     public function file($filename)
     {
-        $safeName = basename($filename);
-        $path = storage_path('files/'.$safeName);
+        $path = $this->resolvePath('files', $filename);
 
-        if (!is_file($path)) {
+        if (!$path) {
             abort(404);
         }
 

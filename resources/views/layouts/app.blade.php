@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Siperlatin</title>
-    <link rel="icon" href="{{ asset('public/images/new logo.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('public/images/new-logo.png') }}" type="image/png">
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -43,6 +43,7 @@
             margin: 0;
             color: var(--text);
             font-family: "Plus Jakarta Sans", sans-serif;
+            overflow-x: hidden;
             background:
                 radial-gradient(circle at 10% 20%, #d8e5ff 0, transparent 25%),
                 radial-gradient(circle at 95% 10%, #ffe4d6 0, transparent 22%),
@@ -55,18 +56,22 @@
 
         .app-shell {
             min-height: 100vh;
-            display: flex;
             position: relative;
         }
 
         .sidebar {
             width: 272px;
-            min-height: 100vh;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            bottom: 0 !important;
+            height: 100vh;
             background: linear-gradient(180deg, var(--brand-dark) 0%, var(--brand-mid) 100%);
             color: #f2f6ff;
             padding: 24px 16px;
             box-shadow: 8px 0 24px rgba(16, 32, 60, 0.2);
             z-index: 1010;
+            overflow-y: auto !important;
         }
 
         .sidebar-brand {
@@ -154,10 +159,13 @@
         }
 
         .main-shell {
-            flex: 1;
+            width: calc(100% - 272px);
+            margin-left: 272px;
+            min-height: 100vh;
             min-width: 0;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .topbar {
@@ -290,13 +298,15 @@
 
         @media (max-width: 992px) {
             .sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
                 transform: translateX(-100%);
                 transition: transform .2s ease;
                 width: 260px;
                 padding-top: 20px;
+            }
+
+            .main-shell {
+                width: 100%;
+                margin-left: 0;
             }
 
             .sidebar-toggle {
@@ -341,7 +351,7 @@
             <div class="sidebar-overlay js-sidebar-overlay"></div>
             <aside class="sidebar">
                 <a class="sidebar-brand text-decoration-none" href="{{ url('/home') }}">
-                    <img src="{{ asset('public/images/new logo.png') }}" alt="Siperlatin">
+                    <img src="{{ asset('public/images/new-logo.png') }}" alt="Siperlatin">
                     <strong>Siperlatin</strong>
                 </a>
 
