@@ -39,7 +39,7 @@
                                     <td>
                                         <?php
                                             if(!empty($row->foto)){?>
-                                                <img src="{{ route('storage.foto', ['filename' => $row->foto]) }}" style="width:90px" />
+                                                <img src="{{ route('storage.foto', ['filename' => $row->foto], false) }}" style="width:90px" />
                                             <?php 
                                             
                                             } else { ?>

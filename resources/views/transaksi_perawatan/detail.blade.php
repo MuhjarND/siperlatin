@@ -11,7 +11,7 @@
                 
                     <div style="margin-bottom:10px">
                         @if(!empty($table->foto))
-                            <img src="{{ route('storage.foto', ['filename' => $table->foto]) }}" style="width:300px" />
+                            <img src="{{ route('storage.foto', ['filename' => $table->foto], false) }}" style="width:300px" />
                         @else
                             <img src="{{ asset('public/images/empty.png') }}" style="width:300px" />
                         @endif
@@ -72,7 +72,7 @@
                                 <td>{{$row->tanggal}}</td>
                                 <td>{{$row->keterangan}}</td>
                                 <td><?php echo number_format((float)$row->nominal, 2, ',', '.'); ?></td>
-                                <td><a href="{{ route('storage.file', ['filename' => $row->file_name]) }}" target="_blank">{{$row->file_name}}</a></td>
+                                <td><a href="{{ route('storage.file', ['filename' => $row->file_name], false) }}" target="_blank">{{$row->file_name}}</a></td>
                                 @if(Auth::check())
                                 <td>
                                     <button class="btn btn-primary btn-sm edit" data-id_transaksi="{{$row->kode_transaksi}}" data-id_detail_barang="{{$id_detail_barang}}">Edit</button> <button class="btn btn-danger btn-sm delete" data-id_transaksi="{{$row->kode_transaksi}}" data-id_detail_barang="{{$id_detail_barang}}">Hapus</button>
